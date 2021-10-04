@@ -142,7 +142,6 @@ Write a short paragraph about these datasets. Explain briefly what each dataset 
 
 # Problem 3
 ## Load and tidy popular_baby_names data.
-
 ```{r Load and tidy popular_baby_names data, message=F, warning=F}
 popular_baby_names <- read_csv("./data/Popular_Baby_Names.csv") %>% 
   janitor::clean_names() 
@@ -153,7 +152,7 @@ table(popular_baby_names$ethnicity) #needs to be cleaned
 
 popular_baby_names <- popular_baby_names %>%
     mutate(
-    childs_first_name = str_to_title(childs_first_name),
+    childs_first_name = str_to_title(str_to_lower(childs_first_name)),
     ethnicity = recode(ethnicity,
   "BLACK NON HISP" = "BLACK NON HISPANIC", 
   "WHITE NON HISP" = "WHITE NON HISPANIC", 
@@ -161,6 +160,18 @@ popular_baby_names <- popular_baby_names %>%
   distinct(year_of_birth, rank, gender, childs_first_name, ethnicity) #ensures that each row is unique
 
 table(popular_baby_names$ethnicity) #cleaned
+```
+
+## Produce a well-structured, reader-friendly table showing the rank in popularity of the name “Olivia” as a female baby name over time
+```{r pivot-wider female_olivia, message=F, warning=F}
+female_olivia <- popular_baby_names %>%
+  filter(gender == "FEMALE", childs_first_name == "Olivia") %>% 
+  arrange(year_of_birth) %>% 
+  pivot_wider(
+    names_from = 'year_of_birth', 
+    values_from = 'rank'
+  ) %>% 
+  select(-c(gender, childs_first_name)) #rows for ethnicities and columns for year
 
 ```
 
