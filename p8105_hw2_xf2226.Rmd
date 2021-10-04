@@ -81,17 +81,16 @@ snp <- read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% #load snp dataset
   janitor::clean_names() 
 
 snp <- snp %>%
-  separate(date, sep = "/", into = c("year", "month","day")) %>% #Use separate() to break up the variable mon into integer variables year, month, and day
   mutate(
-    year = as.integer(year), 
-    month = as.integer(month), 
-    day = as.integer(day),
-    month = month.name[month]) %>% #year and month are the leading columns
+    year = lubridate::year(lubridate::mdy(date)), 
+    month = lubridate::month(lubridate::mdy(date)), 
+    month = month.name[month]) %>% 
+  select(year, month, close) %>% #year and month are the leading columns
   arrange(year, month) #arrange according to year and month
 ```
 
 ## read and tidy unemplotment data
-```{r}
+```{r read and tidy unemplotment data, message=F,warning=F}
 unemployment <- read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
   janitor::clean_names() 
 
@@ -115,5 +114,14 @@ unemployment <- unemployment %>%
 
 unemployment
 
+```
+
+## Join the datasets by merging snp into pols, and merging unemployment into the result.
+```{r}
+fivethirtyeight_merged <- pols_month %>% 
+  left_join(snp, by = c("year", "month")) %>% 
+  left_join(unemployment, by = c("year", "month"))
+
+skimr::skim_without_charts(fivethirtyeight_merged)
 ```
 
