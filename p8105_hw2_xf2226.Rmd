@@ -75,7 +75,6 @@ pols_month <- pols_month %>%
   select(-c(president_boolean, day)) #remove the day variable
 ```
 
-Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
 ## read and clean the data in snp.csv
 ```{r}
 snp <- read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% #load snp dataset
@@ -89,6 +88,32 @@ snp <- snp %>%
     day = as.integer(day),
     month = month.name[month]) %>% #year and month are the leading columns
   arrange(year, month) #arrange according to year and month
-  
+```
+
+## read and tidy unemplotment data
+```{r}
+unemployment <- read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  janitor::clean_names() 
+
+unemployment <- unemployment %>% 
+  pivot_longer(
+    jan:dec, 
+    names_to = 'month', 
+    values_to = "unemployment_rate"
+  ) %>% 
+  mutate(
+    year = as.integer(year),
+    month = apply(as.matrix(month), 1, function(abb){
+      s <- str_to_title(abb)
+      for (i in 1:12) {
+        if (month.abb[i] == s ) {
+          return(month.name[i])
+        }
+      }
+    }
+    ))
+
+unemployment
+
 ```
 
