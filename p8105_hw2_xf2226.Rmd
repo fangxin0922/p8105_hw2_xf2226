@@ -9,10 +9,10 @@ output: github_document
 library(tidyverse)
 ```
 
-# problem 1 
+# Problem 1 
 
 ## Read in and clean Mr. Trash Wheel sheet
-```{r load and clean wheel data, warning=FALSE}
+```{r load and clean wheel data, message=F, warning=F}
 mr_trash_wheel_df <- readxl::read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = 1, range = cellranger::cell_cols("A:N"), skip = 1) %>% # specified the sheet in the Excel file, using sheet = 1; omited non-data entries, using range = cellranger::cell_cols("A:N") and skip = 1
   janitor::clean_names() %>% #use reasonable variable names
   filter(!is.na(dumpster)) #omit rows that do not include dumpster-specific data
@@ -22,7 +22,7 @@ mr_trash_wheel_df$sports_balls <- round(pull(mr_trash_wheel_df, sports_balls), 0
 
 ## Read and clean precipitation data for 2018 and 2019
 
-```{r Read and clean precipitation data for 2018 and 2019}
+```{r Read and clean precipitation data for 2018 and 2019, message=F, warning=F}
 sheets <- readxl::excel_sheets("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx") #read in sheets
 
 precipitation_2018_2019 <- do.call(rbind, lapply(sheets[4:5], function(X) 
@@ -53,7 +53,7 @@ The total precipitation measured in 2018 is `r sum(pull(filter(precipitation_201
 \newpage
 # Problem 2 
 ## read and clean pols_month
-```{r read and clean pols_month, warning=FALSE}
+```{r read and clean pols_month, message=F, warning=F}
 rm(list = ls()) #clean environment to start a new problem
 
 pols_month <- read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% #load pols_month dataset
@@ -76,7 +76,7 @@ pols_month <- pols_month %>%
 ```
 
 ## read and clean the data in snp.csv
-```{r}
+```{r read and clean the data in snp.csv, message=F, warning=F}
 snp <- read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% #load snp dataset
   janitor::clean_names() 
 
@@ -112,17 +112,13 @@ unemployment <- unemployment %>%
     }
     ))
 
-unemployment
-
 ```
 
 ## Join the datasets by merging snp into pols, and merging unemployment into the result.
-```{r}
+```{r, message=F,warning=F}
 fivethirtyeight_merged <- pols_month %>% 
   left_join(snp, by = c("year", "month")) %>% 
   left_join(unemployment, by = c("year", "month"))
-
-skimr::skim(fivethirtyeight_merged)
 ```
 Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
 
@@ -144,7 +140,27 @@ Write a short paragraph about these datasets. Explain briefly what each dataset 
 * `sen_dem`: the number of democratic senators on the associated month and year
 * `rep_dem`: the number of democratic representatives on the associated month and year
 
-```{r}
+# Problem 3
+## Load and tidy popular_baby_names data.
+
+```{r Load and tidy popular_baby_names data, message=F, warning=F}
+popular_baby_names <- read_csv("./data/Popular_Baby_Names.csv") %>% 
+  janitor::clean_names() 
+
+table(popular_baby_names$gender) #gender column seems fine
+
+table(popular_baby_names$ethnicity) #needs to be cleaned 
+
+popular_baby_names <- popular_baby_names %>%
+    mutate(
+    childs_first_name = str_to_title(childs_first_name),
+    ethnicity = recode(ethnicity,
+  "BLACK NON HISP" = "BLACK NON HISPANIC", 
+  "WHITE NON HISP" = "WHITE NON HISPANIC", 
+  "ASIAN AND PACI" = "ASIAN AND PACIFIC ISLANDER")) %>%
+  distinct(year_of_birth, rank, gender, childs_first_name, ethnicity) #ensures that each row is unique
+
+table(popular_baby_names$ethnicity) #cleaned
 
 ```
 
