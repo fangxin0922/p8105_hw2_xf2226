@@ -59,8 +59,6 @@ rm(list = ls()) #clean environment to start a new problem
 pols_month <- read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% #load pols_month dataset
   janitor::clean_names() 
 
-class(pols_month)
-
 pols_month <- pols_month %>%
   separate(mon, sep = "-", into = c("year", "month","day")) %>% #Use separate() to break up the variable mon into integer variables year, month, and day
   mutate(
@@ -75,6 +73,22 @@ pols_month <- pols_month %>%
   ) %>% 
   filter(president_boolean != 0) %>% 
   select(-c(president_boolean, day)) #remove the day variable
+```
 
+Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
+## read and clean the data in snp.csv
+```{r}
+snp <- read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% #load snp dataset
+  janitor::clean_names() 
+
+snp <- snp %>%
+  separate(date, sep = "/", into = c("year", "month","day")) %>% #Use separate() to break up the variable mon into integer variables year, month, and day
+  mutate(
+    year = as.integer(year), 
+    month = as.integer(month), 
+    day = as.integer(day),
+    month = month.name[month]) %>% #year and month are the leading columns
+  arrange(year, month) #arrange according to year and month
+  
 ```
 
