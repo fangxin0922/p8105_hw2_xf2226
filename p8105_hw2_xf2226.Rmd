@@ -172,7 +172,19 @@ female_olivia <- popular_baby_names %>%
     values_from = 'rank'
   ) %>% 
   select(-c(gender, childs_first_name)) #rows for ethnicities and columns for year
-
 ```
+
+##  Produce a similar table showing the most popular name among male children over time.
+```{r male_names, message=F, warning=F}
+male_names <- popular_baby_names %>%
+  filter(gender == "MALE") %>% 
+  arrange(year_of_birth, rank) %>% 
+  pivot_wider(
+    names_from = 'year_of_birth', 
+    values_from = 'rank'
+  ) %>% 
+  select(-c(gender))
+```
+
 
 
