@@ -50,7 +50,31 @@ Some of the key variables in the precipitation dataset for year 2018 and 2019 ar
 
 The total precipitation measured in 2018 is `r sum(pull(filter(precipitation_2018_2019, Year == 2018), Total))` 
 
-```{r}
+\newpage
+# Problem 2 
+## read and clean pols_month
+```{r read and clean pols_month, warning=FALSE}
+rm(list = ls()) #clean environment to start a new problem
+
+pols_month <- read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% #load pols_month dataset
+  janitor::clean_names() 
+
+class(pols_month)
+
+pols_month <- pols_month %>%
+  separate(mon, sep = "-", into = c("year", "month","day")) %>% #Use separate() to break up the variable mon into integer variables year, month, and day
+  mutate(
+    year = as.integer(year), 
+    month = as.integer(month), 
+    day = as.integer(day),
+    month = month.name[month]) %>% 
+  pivot_longer(c("prez_gop","prez_dem"), #a president variable taking values gop and dem
+    names_to = "president",
+    values_to = "president_boolean",
+    names_prefix = "prez_"
+  ) %>% 
+  filter(president_boolean != 0) %>% 
+  select(-c(president_boolean, day)) #remove the day variable
 
 ```
 
