@@ -122,6 +122,30 @@ fivethirtyeight_merged <- pols_month %>%
   left_join(snp, by = c("year", "month")) %>% 
   left_join(unemployment, by = c("year", "month"))
 
-skimr::skim_without_charts(fivethirtyeight_merged)
+skimr::skim(fivethirtyeight_merged)
 ```
+Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
+
+\ The pols-month dataset contains `r nrow(pols_month)` observations of `r ncol(pols_month)` variables related to the number of national politicians who are democratic or republican at the given year-month. The newly created variable `president` in this dataset indicates whether the president in office in the associated year-month was republican (`gop`) or democratic (`dem`)
+
+\ The snp dataset contains `r nrow(snp)` observations of `r ncol(snp)` variables related to Standard & Poor’s stock market index on the given year-month.
+
+\ The unemployment dataset contains `r nrow(unemployment)` observations of `r ncol(unemployment)` variables including the percentage of unemployment in a given month and year.
+
+\ All these 3 datasets were merged to a final dataframe called `fivethirtyeight_merged`. This final data frame contains `r nrow(fivethirtyeight_merged)` observations of `r ncol(fivethirtyeight_merged)` variables. The data years range from year `r min(pull(fivethirtyeight_merged, year))` to year `r max(pull(fivethirtyeight_merged, year))`. Overall, this final data frame includes the number of senator, representative, governor of each party, party of the president in office, the closing values of the S&P stock index, and the unemployment rate on the associated year and month. Key variables: 
+
+* `close` = the closing values of the S&P stock index on the associated month and year
+* `unemplyment_rate` = percentage of unemployment of the associated month and year
+* `president` = whether the president in office in the associated year-month was republican (`gop`) or democratic (`dem`)
+* `gov_gop`: the number of republican governors on the associated month and year
+* `sen_gop`: the number of republican senators on the associated month and year
+* `rep_gop`: the number of republican representatives on the associated month and year
+* `gov_dem`: the number of democratic governors on the associated month and year
+* `sen_dem`: the number of democratic senators on the associated month and year
+* `rep_dem`: the number of democratic representatives on the associated month and year
+
+```{r}
+
+```
+
 
