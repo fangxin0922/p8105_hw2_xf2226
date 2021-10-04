@@ -20,3 +20,22 @@ mr_trash_wheel_df <- readxl::read_excel("./data/Trash-Wheel-Collection-Totals-8-
 mr_trash_wheel_df$sports_balls <- round(pull(mr_trash_wheel_df, sports_balls), 0) #round the number of sports balls to the nearest integer
 ```
 
+## Read and clean precipitation data for 2018 and 2019
+
+```{r Read and clean precipitation data for 2018 and 2019}
+sheets <- readxl::excel_sheets("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx") #read in sheets
+
+precipitation_2018_2019 <- do.call(rbind, lapply(sheets[4:5], function(X) 
+        transform(readxl::read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = X, skip = 1), sheetname = X))) #rbind the two seperate sheets and add a column containing the sheetnames
+
+precipitation_2018_2019 <- precipitation_2018_2019 %>% 
+  na.omit(total) %>% #omit rows without precipitation data
+  mutate(Year = substr(sheetname, 1, 4), Month = month.name[Month]) %>%  #add a variable for year and convert month to a character variable
+  select(Year, Month, Total) %>% 
+  as_tibble()
+```
+
+```{r}
+
+```
+
