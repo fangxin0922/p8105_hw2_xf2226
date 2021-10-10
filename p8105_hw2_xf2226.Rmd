@@ -26,7 +26,7 @@ mr_trash_wheel_df$sports_balls <- round(pull(mr_trash_wheel_df, sports_balls), 0
 ```{r Read and clean precipitation data for 2018 and 2019, message=F, warning=F}
 sheets <- readxl::excel_sheets("./data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx") #read in sheets
 
-precipitation_2018_2019 <- do.call(rbind, lapply(sheets[4:5], function(X) 
+precipitation_2018_2019 <- do.call(rbind, lapply(sheets[6:7], function(X) 
         transform(readxl::read_excel("./data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx", sheet = X, skip = 1), sheetname = X))) #rbind the two seperate sheets and add a column containing the sheetnames
 
 precipitation_2018_2019 <- precipitation_2018_2019 %>% 
@@ -82,10 +82,10 @@ snp <- read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% #load snp dataset
   janitor::clean_names() 
 
 snp <- snp %>%
+  separate(date, sep = "/", into = c("month", "day", "year")) %>% 
   mutate(
-    year = lubridate::year(lubridate::mdy(date)), 
-    month = lubridate::month(lubridate::mdy(date)), 
-    month = month.name[month]) %>% 
+    year = as.integer(ifelse(year > 21, paste0("19",year), paste0("20",year))), 
+    month = month.name[as.integer(month)]) %>% 
   select(year, month, close) %>% #year and month are the leading columns
   arrange(year, month) #arrange according to year and month
 ```
